@@ -54,9 +54,10 @@ The IP integration is finished adding an user interface in which it is possible 
 - ```Version```: selection of the algorithm of SHA3/SHAKE that are compiled in the FIPS 202. 
 - ```NUM_STAGES```: the number of concatenation stages. The maximum number is 24.
 - ```STAGES_REG```: that allows the implementation of intermediate registers. 
-- ```max_cycles```: is the number of maximum cycles it is possible to accelerate the algorithm avoind timing attacks. See PhD Dissertation.
 
 ![](images/IP_integrator_sha3.png)
+
+<img src="(images/IP_integrator_sha3.png" alt="" width="200"/>
 
 <!--- 
 The next table shows all the implementations delivered in this repository. There are in total 8 different strategies: 4 parameters set in the NTRU where in each one the
