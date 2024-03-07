@@ -55,9 +55,7 @@ The IP integration is finished adding an user interface in which it is possible 
 - ```NUM_STAGES```: the number of concatenation stages. The maximum number is 24.
 - ```STAGES_REG```: that allows the implementation of intermediate registers. 
 
-![](images/IP_integrator_sha3.png)
-
-<img src="images/IP_integrator_sha3.png" alt="" width="200"/>
+<img src="images/IP_integrator_sha3.png" alt="" width="600"/>
 
 <!--- 
 The next table shows all the implementations delivered in this repository. There are in total 8 different strategies: 4 parameters set in the NTRU where in each one the
