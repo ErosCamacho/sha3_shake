@@ -3,11 +3,11 @@
 #include <stdlib.h>
 #include <math.h>
 #include "pynq_api.h"
-#include "Funciones_HW.h"
-#include "Funcion_Test.h"
-#include "shake_hw.h"
-#include "sha3.h"
-#include "params.h"
+#include "sha3/common/Funciones_HW.h"
+#include "sha3/common/Funcion_Test.h"
+#include "sha3/hw/shake_hw.h"
+#include "sha3/sw/sha3.h"
+#include "sha3/hw/params.h"
 
 void main(int argc, char** argv) {
 

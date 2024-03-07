@@ -3,11 +3,11 @@
 #include <stdlib.h>
 #include <math.h>
 #include "pynq_api.h"
-#include "Funciones_HW.h"
-#include "Funcion_Test.h"
-#include "sha3_hw.h"
-#include "sha3.h"
-#include "params.h"
+#include "sha3/common/Funciones_HW.h"
+#include "sha3/common/Funcion_Test.h"
+#include "sha3/hw/sha3_hw.h"
+#include "sha3/sw/sha3.h"
+#include "sha3/hw/params.h"
 
 void main(int argc, char** argv) {
 
@@ -74,7 +74,12 @@ void main(int argc, char** argv) {
 		}
 	}
 
-	unsigned char in[SIZE_INPUT];
+	//unsigned char in[SIZE_INPUT];
+
+	unsigned char* in;
+	in = malloc(sizeof(unsigned char) * SIZE_INPUT);
+	memset(in, 0, SIZE_INPUT);
+
 	unsigned char out_hw[SIZE_OUTPUT];
 	unsigned char *out_nist;
 	unsigned long long int length;

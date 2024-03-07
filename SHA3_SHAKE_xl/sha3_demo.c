@@ -3,17 +3,17 @@
 #include <stdlib.h>
 #include <math.h>
 #include "pynq_api.h"
-#include "Funciones_HW.h"
-#include "Funcion_Test.h"
-#include "sha3_hw.h"
-#include "sha3.h"
-#include "params.h"
+#include "sha3/common/Funciones_HW.h"
+#include "sha3/common/Funcion_Test.h"
+#include "sha3/hw/sha3_hw.h"
+#include "sha3/sw/sha3.h"
+#include "sha3/hw/params.h"
 
 void main(int argc, char** argv) {
 
 	int DBG = 0;
 	unsigned long long length;
-	unsigned long long length_byte;
+	unsigned long long length_bits;
 
 	int hex = 0;
 
@@ -76,7 +76,10 @@ void main(int argc, char** argv) {
 		}
 	}
 
-	unsigned char in[SIZE_INPUT];
+	unsigned char* in;
+	in = malloc(sizeof(unsigned char) * SIZE_INPUT);
+
+	//unsigned char in[SIZE_INPUT];
 	unsigned char out_hw[SIZE_OUTPUT];
 
 	memset(in, 0, SIZE_INPUT);
@@ -105,7 +108,7 @@ void main(int argc, char** argv) {
 
 		// Get Data: Length & Input Data
 	if (f) {
-		input_file(in, &length_byte, file_name, hex, DBG);
+		input_file(in, &length_bits, file_name, hex, DBG);
 	}
 	else {
 		if (hex) {
@@ -129,17 +132,17 @@ void main(int argc, char** argv) {
 				else char_to_hex(buf[ind1], buf[ind2], &character);
 				in[i] = character;
 			}
-			length_byte = 8 * (int)ceil((float)length / 2);
+			length_bits = 8 * (int)ceil((float)length / 2);
 		}
 		else {
 			for (int i = 0; i < length; i++) in[i] = buf[i];
-			length_byte = 8 * length;
+			length_bits = 8 * length;
 		}
 	}
 
 	// SHA2 HW Execution
 	tic = PYNQ_Wtime();
-		sha3_hw(in, out_hw, length_byte, ms2xl, DBG);
+		sha3_hw(in, out_hw, length_bits, ms2xl, DBG);
 	time_hw = PYNQ_Wtime() - tic;
 
 	// SHA2 SW Execution
@@ -147,7 +150,7 @@ void main(int argc, char** argv) {
 
 	tic = PYNQ_Wtime();
 		sha3_init(&ctx, mdlen);
-		sha3_update(&ctx, in_sw, (length_byte / 8));
+		sha3_update(&ctx, in_sw, (length_bits / 8));
 		sha3_final(out_sw, &ctx);
 	time_sw = PYNQ_Wtime() - tic;
 
@@ -158,9 +161,9 @@ void main(int argc, char** argv) {
 	// Print Result
 	if (v >= 1) {
 		if(pass_hw) printf("\n \t -- Results of the Execution -- \n \n Msg. Length: %lld (bits) %lld (bytes) \t \t Acceleration: %.2f \t \t HW Pass: YES",
-			8 * length_byte, length_byte, ((float)(time_sw) / (float)(time_hw)));
+			length_bits, length_bits / 8, ((float)(time_sw) / (float)(time_hw)));
 		else printf("\n \t -- Results of the Execution -- \n \n Msg. Length: %lld (bits) %lld (bytes) \t \t Acceleration: %.2f \t \t HW Pass: FAIL",
-			8 * length_byte, length_byte, ((float)(time_sw) / (float)(time_hw)));
+			length_bits, length_bits / 8, ((float)(time_sw) / (float)(time_hw)));
 		printf("\n \n Hash Result: \t");	for (int i = 0; i < SIZE_OUTPUT; i++) printf("%02x", out_hw[i]);
 		printf("\n");
 	}

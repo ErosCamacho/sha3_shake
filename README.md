@@ -1,92 +1,203 @@
-# SHA3_SHAKE
+# SHA3 / SHAKE HW IP module
 
+2024-03-07 - Eros Camacho-Ruiz (camacho@imse-cnm.csic.es)
 
+This is the repository of the evaluation carried out in the SHA3/SHAKE section presented in the [PhD Dissertation](https://github.com/ErosCamacho/PhD_Dissertation/blob/main/PhD_Thesis_Eros_Camacho_Ruiz_vFinal_rev.pdf) entitled: <b>"Design of a hardware Root-of-Trust on embedded systems"</b>
 
-## Getting started
+The main idea of this repository is, following the standard FIPS 202:
+- Present the IP Module developed in the context of the dissertation. 
+- Present an extensible test functionality in which the NIST Tests Vector have been validated. 
+- Define a demo for the modules presented.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+*Note: All the content of this repository has been implemented using the Pynq Framework.*
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+<!-- TABLE OF CONTENTS -->
+## Table of Contents
+  <ol>
+    <li><a href="#dir-struc">Directory structure</a></li>
+    <li><a href="#ip-integ">IP Integration</a></li>
+    <li><a href="#pre-pynqz2">Prerequisites for the Pynq-Z2 platform</a></li>
+    <li><a href="#ins-test">Installation and Use of the Test</a></li>
+	<li><a href="#ins-demo">Installation and Use of the Demo</a></li>
+	<li><a href="#example">Example of the Demo</a></li>
+    <li><a href="#note">Note for version</a></li>
+    <li><a href="#contact">Contact</a></li>
+	<li><a href="#developers">Developers</a></li>
+  </ol>
 
-## Add your files
+## Directory structure <a name="dir-struc"></a>
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+- sha3_xl_1_0: the IP module of the SHA3/SHAKE algorithm.
+- SHA3_SHAKE_xl: the folder that contains the software implementation and the HW call drivers.
+    - files: this folder contains the files to be parsed in the demo of the SHA3/SHAKE.
+	- NIST_TestVector: the NIST Test Vector for SHA3 and SHAKE.
+    - sha3: this folder contains all the files to implement and use the SHA3/SHAKE either in HW and SW version.
+    - sha3_test.c: main file to sha3 tests
+	- shake_test.c: main file to shake tests
+	- sha3_demo.c: main file to sha3 demo
+	- shake_demo.c: main file to shake demo
+    - Makefile: to generate the executables for the library
+- README.md: this file 
 
+## IP Integration <a name="ip-integ"></a>
+
+The IP module is delivered in the ```sha3_xl_1_0``` folder. 
+The design of the core part of the IP module is depicted in the next figure. 
+The Basic version stores the intermediate result of the Keccak operation in the register and the Arithmetic Unit is just the Keccak function. 
+Apart from that, two optimized versions were proposed. 
+The first one is the concatenation of Keccak units. This reduce the number of operation cycles the more stages are concatenated.
+The second one apart from concatenates Keccak units also concatenates intermediate registers. That allows to store intermediate results. 
+
+![](images/schematic_sha3core.png)
+
+The IP integration is finished adding an user interface in which it is possible to modify the next parameters of module:
+- ```Version```: selection of the algorithm of SHA3/SHAKE that are compiled in the FIPS 202. 
+- ```NUM_STAGES```: the number of concatenation stages. The maximum number is 24.
+- ```STAGES_REG```: that allows the implementation of intermediate registers. 
+- ```max_cycles```: is the number of maximum cycles it is possible to accelerate the algorithm avoind timing attacks. See PhD Dissertation.
+
+![](images/IP_integrator_sha3.png)
+
+The next table shows all the implementations delivered in this repository. There are in total 8 different strategies: 4 parameters set in the NTRU where in each one the
+`max_cycles` value was set in `N` and `CL` (Confident Limit). From each configuration there are different values of `M`: `1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,32,64,128,256`.
+That is basically the content of the folder `NTRU_3Round.rar\bit\`. As a final user, you can discard (and remove) other implementations and remake the embedded integration using the 
+configuration more suitable for your interest. 
+
+| Parameter set |  `N`  | `CL` |
+| :------------ | --- | --- |
+| `ntruhps2048509` | 509 | 400 |
+| `ntruhps2048677` | 677 | 516 |
+| `ntruhps2048821` | 821 | 625 |
+| `ntruhrss2048701` | 701 | 533 |
+
+For further information, see Chapter 4 of the [PhD Dissertation](https://github.com/ErosCamacho/PhD_Dissertation/blob/main/PhD_Thesis_Eros_Camacho_Ruiz_vFinal_rev.pdf)
+
+## Prerequisites for the Pynq-Z2 platform <a name="pre-pynqz2"></a>
+
+1. Download the PYNQ C-API from https://github.com/mesham/pynq_api
+
+2. Then, issue ```make```. Once it is built, issue ```sudo make install```. 
+
+## Installation and Use of the Test <a name="ins-test"></a>
+
+1. For compilation of a specific test:
+
+```bash
+make Test_N_VALUE
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/hwsec/sha3_shake.git
-git branch -M main
-git push -uf origin main
+
+where `N_VALUE` can be: `509, 677, 821, 701`. So, for example if the user wants to compile something related with the parameter set `ntruhps2048509`, 
+they must issue: `make Test_509`
+
+2. For the use, the program has different input variables:
+	- `-h` : Show the help.
+	- `-hh` : Show the extended help.
+	- `-n` : Number of test to perform.
+	- `-M` : Paralelization coefficient. *Note: For that there must be a bitstream in the folder `N/CL/M`.
+	- `-y` : CL parameter.
+	
+	Also it includes options to debug different parts:
+	- `-d` : debug level
+	- `-c` : number of coefficients to show in the debug. *In order to avoid a data massification on the screen.* 
+		- `0`: Minimize the print in window.
+		- `1`: Show the time in each part of the algorithm.
+		- `2`: Show the extended evaluation of time.
+		- `3`: Show the coefficients of SW and HW.
+		- `4`: Show the multiplication operation in SW.
+		- `5`: Show the multiplication operation in HW.
+		- `6`: Show the public key.
+		- `7`: Show the seed and he coefficients of r and h.
+		- `8`: Show the multiplication operation in SW 3 ROUND.
+		- `9`: Show the cuphertext of 3 ROUND, LIBNTRU, HW.
+		- `10`: Show the hash of rm.
+		- `11`: ***ONLY FOR PERFORMING THE SEED ANALYSIS.*** It generates the file `r.txt` .
+
+An example, if it is desired to performance 1000 tests on the `ntruhps2048509` parameter set, using a confident limit of 400 with a parallelization coefficient of 10, 
+it has to be typed: `Test_509 -n 1000 -M 10 -y 400`
+
+## Installation and Use of the Demo <a name="ins-demo"></a>
+
+The main idea of the Demo is to interconnect two devices and share information using PQC as the next figure shows. In this case, two Pynq platforms are interconnected 
+in a local network. The two of them are going to generate the key pair (public and private keys). Then, one of them is going to recive the public key of the other one using 
+this key to encapsulate a shared secret. Then the ciphertext generated (with the information of the shared secret) is sent to the other platform that will use the 
+private key to decapsulate and extract the shared secret. 
+
+![](images/demo_ntru.jpg)
+
+1. For compilation of a specific demo:
+
+```bash
+make Demo_N_VALUE
 ```
 
-## Integrate with your tools
+where `N_VALUE` can be: `509, 677, 821, 701`. So, for example if the user wants to compile something related with the parameter set `ntruhps2048509`, 
+they must issue: `make Demo_509`
 
-- [ ] [Set up project integrations](https://gitlab.com/hwsec/sha3_shake/-/settings/integrations)
+2. For the use, the program has different input variables:
+	- `-h` : Show the help.
+	- `-k` : Key generation.
+	- `-e` : Encapsulation. 
+	- `-d` : Decapsulation.
+	
+	Also it includes verbose options:
+	- `-v` : verbose level level
+		- `1`: Show only functions.
+		- `2`: Show intermediate results.
+		- `3`: Show keys.
 
-## Collaborate with your team
+## Example of the Demo <a name="example"></a>
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+A demo video example can be seen in the next [link](https://saco.csic.es/index.php/s/Ze9GETKY7zzMJ23). 
 
-## Test and Deploy
+For the example, two platforms will be used: #PLATFORM_1 and #PLATFORM_2. It is recommended that the verbose level be 2 in order to see all the intermediate results.
 
-Use the built-in continuous integration in GitLab.
+1. The first step is to perform the key generation in both platforms:
+```bash
+Demo_509 -k -v 2
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+2. The next step is to send the public key of the #PLATFORM_1 to the #PLATFORM_2:
+```bash
+send_pk.sh
+```
+*Note: the configuration set in `send_pk.sh` can be modified to the final user. It has been set to my personal set-up.*
 
-***
+3. The next step is to encapsulate the shared secret using the public key in the #PLATFORM_2.
+```bash
+Demo_509 -e -v 2
+```
 
-# Editing this README
+4. The next step is to send the ciphertext generated in the below step back to the #PLATFORM_1:
+```bash
+send_ct.sh
+```
+*Note: the configuration set in `send_ct.sh` can be modified to the final user. It has been set to my personal set-up.*
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+5. The next step is to recover the shared secret in the #PLATFORM_1 decapsulating:
+```bash
+Demo_509 -d -v 2
+```
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+At the end, it will check that both platforms share the same secrets.
 
-## Name
-Choose a self-explaining name for your project.
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+## Note for version <a name="note"></a>
+### v. 1.0
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+* Reordered the repository structure.
+* Added a Readme file. 
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## Contact <a name="contact"></a>
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+**Eros Camacho-Ruiz** - (camacho@imse-cnm.csic.es)
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+_Hardware Cryptography Researcher_ 
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+_Instituto de Microelectrónica de Sevilla (IMSE-CNM), CSIC, Universidad de Sevilla, Seville, Spain_
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+## Developers <a name="developers"></a>
+Eros Camacho-Ruiz
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+_Instituto de Microelectrónica de Sevilla (IMSE-CNM), CSIC, Universidad de Sevilla, Seville, Spain_
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.

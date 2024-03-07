@@ -5,8 +5,8 @@
 #include "pynq_api.h"
 #include "Funciones_HW.h"
 #include "Funcion_Test.h"
-#include "sha3_hw.h"
-#include "params.h"
+#include "../hw/sha3_hw.h"
+#include "../hw/params.h"
 
 void reset_in(unsigned char* INPUT) {
 	for (int i = 0; i < SIZE_INPUT; i++) INPUT[i] = 0x00;
@@ -23,10 +23,10 @@ void input_nist(unsigned char* INPUT, unsigned char* OUTPUT, unsigned long long 
 	char file_bit_long[100];
 	char sha[4];
 
-	sprintf(file_byte_short, "%s", "sha-3bytetestvectors/SHA3_");
-	sprintf(file_byte_long, "%s", "sha-3bytetestvectors/SHA3_");
-	sprintf(file_bit_short, "%s", "sha-3bittestvectors/SHA3_");
-	sprintf(file_bit_long, "%s", "sha-3bittestvectors/SHA3_");
+	sprintf(file_byte_short, "%s", "NIST_TestVector/sha-3bytetestvectors/SHA3_");
+	sprintf(file_byte_long, "%s", "NIST_TestVector/sha-3bytetestvectors/SHA3_");
+	sprintf(file_bit_short, "%s", "NIST_TestVector/sha-3bittestvectors/SHA3_");
+	sprintf(file_bit_long, "%s", "NIST_TestVector/sha-3bittestvectors/SHA3_");
 
 	sprintf(sha, "%d", SIZE_SHA3);
 	strcat(file_byte_short, sha);
@@ -62,9 +62,24 @@ void input_nist(unsigned char* INPUT, unsigned char* OUTPUT, unsigned long long 
 		}
 	}
 
+	/*
 	char line[MAX_LINE_LENGTH] = { 0 };
 	char line_buffer[MAX_LINE_LENGTH] = { 0 };
 	unsigned char data_in[SIZE_INPUT];
+	*/
+
+	unsigned char* line;
+	line = malloc(sizeof(unsigned char) * MAX_LINE_LENGTH);
+	memset(line, 0, MAX_LINE_LENGTH);
+
+	unsigned char* line_buffer;
+	line_buffer = malloc(sizeof(unsigned char) * MAX_LINE_LENGTH);
+	memset(line_buffer, 0, MAX_LINE_LENGTH);
+
+	unsigned char* data_in;
+	data_in = malloc(sizeof(unsigned char) * SIZE_INPUT);
+	memset(data_in, 0, SIZE_INPUT);
+
 	unsigned char data_out[SIZE_OUTPUT];
 	int line_count = -8; // Necesario para eliminar las cabeceras de los archivos
 	int ind1, ind2;
@@ -104,7 +119,7 @@ void input_nist(unsigned char* INPUT, unsigned char* OUTPUT, unsigned long long 
 					data_in[i] = buf;
 					if (DBG == 3) printf("%02x", data_in[i]);
 			}
-			memcpy(INPUT, data_in, sizeof(data_in));
+			memcpy(INPUT, data_in, sizeof(unsigned char) * ce);
 
 		}
 
@@ -148,10 +163,10 @@ void input_nist_shake(unsigned char* INPUT, unsigned char* OUTPUT, unsigned long
 	char file_bit_long[100];
 	char sha[4];
 
-	sprintf(file_byte_short, "%s", "shakebytetestvectors/SHAKE");
-	sprintf(file_byte_long, "%s", "shakebytetestvectors/SHAKE");
-	sprintf(file_bit_short, "%s", "shakebittestvectors/SHAKE");
-	sprintf(file_bit_long, "%s", "shakebittestvectors/SHAKE");
+	sprintf(file_byte_short, "%s", "NIST_TestVector/shakebytetestvectors/SHAKE");
+	sprintf(file_byte_long, "%s", "NIST_TestVector/shakebytetestvectors/SHAKE");
+	sprintf(file_bit_short, "%s", "NIST_TestVector/shakebittestvectors/SHAKE");
+	sprintf(file_bit_long, "%s", "NIST_TestVector/shakebittestvectors/SHAKE");
 
 	sprintf(sha, "%d", SIZE_SHA3);
 	strcat(file_byte_short, sha);
@@ -187,9 +202,18 @@ void input_nist_shake(unsigned char* INPUT, unsigned char* OUTPUT, unsigned long
 		}
 	}
 
-	char line[MAX_LINE_LENGTH] = { 0 };
-	char line_buffer[MAX_LINE_LENGTH] = { 0 };
-	unsigned char data_in[SIZE_INPUT];
+	unsigned char* line;
+	line = malloc(sizeof(unsigned char) * MAX_LINE_LENGTH);
+	memset(line, 0, MAX_LINE_LENGTH);
+
+	unsigned char* line_buffer;
+	line_buffer = malloc(sizeof(unsigned char) * MAX_LINE_LENGTH);
+	memset(line_buffer, 0, MAX_LINE_LENGTH);
+
+	unsigned char* data_in;
+	data_in = malloc(sizeof(unsigned char) * SIZE_INPUT);
+	memset(data_in, 0, SIZE_INPUT);
+
 	unsigned char data_out[SIZE_OUTPUT];
 	int line_count = -8; // Necesario para eliminar las cabeceras de los archivos
 	int ind1, ind2;
@@ -229,7 +253,7 @@ void input_nist_shake(unsigned char* INPUT, unsigned char* OUTPUT, unsigned long
 				data_in[i] = buf;
 				if (DBG == 3) printf("%02x", data_in[i]);
 			}
-			memcpy(INPUT, data_in, sizeof(data_in));
+			memcpy(INPUT, data_in, sizeof(unsigned char) * ce);
 
 		}
 
@@ -271,8 +295,8 @@ void input_nist_shake_varout(unsigned char* INPUT, unsigned char* OUTPUT, unsign
 	char file_bit[100];
 	char sha[4];
 
-	sprintf(file_byte, "%s", "shakebytetestvectors/SHAKE");
-	sprintf(file_bit, "%s", "shakebittestvectors/SHAKE");
+	sprintf(file_byte, "%s", "NIST_TestVector/shakebytetestvectors/");
+	sprintf(file_bit, "%s", "NIST_TestVector/shakebittestvectors/");
 
 	sprintf(sha, "%d", SIZE_SHA3);
 	strcat(file_byte, sha);
@@ -292,9 +316,18 @@ void input_nist_shake_varout(unsigned char* INPUT, unsigned char* OUTPUT, unsign
 
 	selection = sel;
 
-	char line[MAX_LINE_LENGTH] = { 0 };
-	char line_buffer[MAX_LINE_LENGTH] = { 0 };
-	unsigned char data_in[SIZE_INPUT];
+	unsigned char* line;
+	line = malloc(sizeof(unsigned char) * MAX_LINE_LENGTH);
+	memset(line, 0, MAX_LINE_LENGTH);
+
+	unsigned char* line_buffer;
+	line_buffer = malloc(sizeof(unsigned char) * MAX_LINE_LENGTH);
+	memset(line_buffer, 0, MAX_LINE_LENGTH);
+
+	unsigned char* data_in;
+	data_in = malloc(sizeof(unsigned char) * SIZE_INPUT);
+	memset(data_in, 0, SIZE_INPUT);
+
 	unsigned char data_out[SIZE_OUTPUT];
 	int line_count = -10; // Necesario para eliminar las cabeceras de los archivos
 	int ind1, ind2;
@@ -334,7 +367,7 @@ void input_nist_shake_varout(unsigned char* INPUT, unsigned char* OUTPUT, unsign
 				data_in[i] = buf;
 				if (DBG == 3) printf("%02x", data_in[i]);
 			}
-			memcpy(INPUT, data_in, sizeof(data_in));
+			memcpy(INPUT, data_in, sizeof(unsigned char) * ce);
 
 		}
 
@@ -373,15 +406,28 @@ void input_file(unsigned char* INPUT, unsigned long long int* LEN, unsigned char
 	int selection;
 	rsp = fopen(FILE_NAME, "r");
 
+	/*
 	unsigned char line[MAX_LINE_LENGTH] = { 0 };
 	unsigned char line_buffer[MAX_LINE_LENGTH] = { 0 };
 	unsigned char data_in[SIZE_INPUT];
+	*/
+	unsigned char* line;
+	line = malloc(sizeof(unsigned char) * MAX_LINE_LENGTH);
+	memset(line, 0, MAX_LINE_LENGTH);
+
+	unsigned char* line_buffer;
+	line_buffer = malloc(sizeof(unsigned char) * MAX_LINE_LENGTH);
+	memset(line_buffer, 0, MAX_LINE_LENGTH);
+
+	unsigned char* data_in;
+	data_in = malloc(sizeof(unsigned char) * SIZE_INPUT);
+	memset(data_in, 0, SIZE_INPUT);
+
 	unsigned char data_out[SIZE_OUTPUT];
 	unsigned char character;
 	int line_count = 0;
 	int ind1, ind2;
 
-	memset(data_in, 0, SIZE_INPUT);
 	memset(data_out, 0, SIZE_OUTPUT);
 
 	while (fgets(line, MAX_LINE_LENGTH, rsp))
@@ -391,9 +437,10 @@ void input_file(unsigned char* INPUT, unsigned long long int* LEN, unsigned char
 		else ++line_count;
 
 		unsigned long long length = (unsigned long long)strlen(line);
+		//printf("\n length: %lld", length);
 
 		// Obtener DATA_INPUT
-		if (DBG == 3) printf("\n data_in:");
+		if (DBG == 3) printf("\n data_in: \n");
 		for (int i = 0; i < length; i++) {
 			line_buffer[i] = line[i];
 		}
@@ -418,10 +465,17 @@ void input_file(unsigned char* INPUT, unsigned long long int* LEN, unsigned char
 				}
 				else char_to_hex(line_buffer[ind1], line_buffer[ind2], &character);
 				data_in[i] = character;
-				if (DBG == 3) printf("%02x", data_in[i]);
+				if (DBG == 3) {
+					printf("%c %c %02x %02x", line_buffer[ind1], line_buffer[ind2], character, data_in[i]);
+					getchar();
+				}
 			}
+			printf("\n length: %lld", length);
+			printf("\n length: %lld", length/2);
+			printf("\n length: %lld", 4*length);
+
 			*LEN = 8 * (int)ceil((float)length / 2);
-			memcpy(INPUT, data_in, sizeof(data_in));
+			memcpy(INPUT, data_in, sizeof(unsigned char) * (int)ceil((float)length / 2));
 		}
 		else {
 			*LEN = 8 * length;
@@ -458,6 +512,12 @@ void char_to_hex(unsigned char in0, unsigned char in1, unsigned char* out) {
 		case 'd': *out = 0x0d; break;
 		case 'e': *out = 0x0e; break;
 		case 'f': *out = 0x0f; break;
+		case 'A': *out = 0x0a; break;
+		case 'B': *out = 0x0b; break;
+		case 'C': *out = 0x0c; break;
+		case 'D': *out = 0x0d; break;
+		case 'E': *out = 0x0e; break;
+		case 'F': *out = 0x0f; break;
 		} break;
 	case '1':
 		switch (in1) {
@@ -477,6 +537,12 @@ void char_to_hex(unsigned char in0, unsigned char in1, unsigned char* out) {
 		case 'd': *out = 0x1d; break;
 		case 'e': *out = 0x1e; break;
 		case 'f': *out = 0x1f; break;
+		case 'A': *out = 0x1a; break;
+		case 'B': *out = 0x1b; break;
+		case 'C': *out = 0x1c; break;
+		case 'D': *out = 0x1d; break;
+		case 'E': *out = 0x1e; break;
+		case 'F': *out = 0x1f; break;
 		} break;
 	case '2':
 		switch (in1) {
@@ -496,6 +562,12 @@ void char_to_hex(unsigned char in0, unsigned char in1, unsigned char* out) {
 		case 'd': *out = 0x2d; break;
 		case 'e': *out = 0x2e; break;
 		case 'f': *out = 0x2f; break;
+		case 'A': *out = 0x2a; break;
+		case 'B': *out = 0x2b; break;
+		case 'C': *out = 0x2c; break;
+		case 'D': *out = 0x2d; break;
+		case 'E': *out = 0x2e; break;
+		case 'F': *out = 0x2f; break;
 		} break;
 	case '3':
 		switch (in1) {
@@ -515,6 +587,12 @@ void char_to_hex(unsigned char in0, unsigned char in1, unsigned char* out) {
 		case 'd': *out = 0x3d; break;
 		case 'e': *out = 0x3e; break;
 		case 'f': *out = 0x3f; break;
+		case 'A': *out = 0x3a; break;
+		case 'B': *out = 0x3b; break;
+		case 'C': *out = 0x3c; break;
+		case 'D': *out = 0x3d; break;
+		case 'E': *out = 0x3e; break;
+		case 'F': *out = 0x3f; break;
 		} break;
 	case '4':
 		switch (in1) {
@@ -534,6 +612,12 @@ void char_to_hex(unsigned char in0, unsigned char in1, unsigned char* out) {
 		case 'd': *out = 0x4d; break;
 		case 'e': *out = 0x4e; break;
 		case 'f': *out = 0x4f; break;
+		case 'A': *out = 0x4a; break;
+		case 'B': *out = 0x4b; break;
+		case 'C': *out = 0x4c; break;
+		case 'D': *out = 0x4d; break;
+		case 'E': *out = 0x4e; break;
+		case 'F': *out = 0x4f; break;
 		} break;
 	case '5':
 		switch (in1) {
@@ -553,6 +637,12 @@ void char_to_hex(unsigned char in0, unsigned char in1, unsigned char* out) {
 		case 'd': *out = 0x5d; break;
 		case 'e': *out = 0x5e; break;
 		case 'f': *out = 0x5f; break;
+		case 'A': *out = 0x5a; break;
+		case 'B': *out = 0x5b; break;
+		case 'C': *out = 0x5c; break;
+		case 'D': *out = 0x5d; break;
+		case 'E': *out = 0x5e; break;
+		case 'F': *out = 0x5f; break;
 		} break;
 	case '6':
 		switch (in1) {
@@ -572,6 +662,12 @@ void char_to_hex(unsigned char in0, unsigned char in1, unsigned char* out) {
 		case 'd': *out = 0x6d; break;
 		case 'e': *out = 0x6e; break;
 		case 'f': *out = 0x6f; break;
+		case 'A': *out = 0x6a; break;
+		case 'B': *out = 0x6b; break;
+		case 'C': *out = 0x6c; break;
+		case 'D': *out = 0x6d; break;
+		case 'E': *out = 0x6e; break;
+		case 'F': *out = 0x6f; break;
 		} break;
 	case '7':
 		switch (in1) {
@@ -591,6 +687,12 @@ void char_to_hex(unsigned char in0, unsigned char in1, unsigned char* out) {
 		case 'd': *out = 0x7d; break;
 		case 'e': *out = 0x7e; break;
 		case 'f': *out = 0x7f; break;
+		case 'A': *out = 0x7a; break;
+		case 'B': *out = 0x7b; break;
+		case 'C': *out = 0x7c; break;
+		case 'D': *out = 0x7d; break;
+		case 'E': *out = 0x7e; break;
+		case 'F': *out = 0x7f; break;
 		} break;
 	case '8':
 		switch (in1) {
@@ -610,6 +712,12 @@ void char_to_hex(unsigned char in0, unsigned char in1, unsigned char* out) {
 		case 'd': *out = 0x8d; break;
 		case 'e': *out = 0x8e; break;
 		case 'f': *out = 0x8f; break;
+		case 'A': *out = 0x8a; break;
+		case 'B': *out = 0x8b; break;
+		case 'C': *out = 0x8c; break;
+		case 'D': *out = 0x8d; break;
+		case 'E': *out = 0x8e; break;
+		case 'F': *out = 0x8f; break;
 		} break;
 	case '9':
 		switch (in1) {
@@ -629,6 +737,12 @@ void char_to_hex(unsigned char in0, unsigned char in1, unsigned char* out) {
 		case 'd': *out = 0x9d; break;
 		case 'e': *out = 0x9e; break;
 		case 'f': *out = 0x9f; break;
+		case 'A': *out = 0x9a; break;
+		case 'B': *out = 0x9b; break;
+		case 'C': *out = 0x9c; break;
+		case 'D': *out = 0x9d; break;
+		case 'E': *out = 0x9e; break;
+		case 'F': *out = 0x9f; break;
 		} break;
 	case 'a':
 		switch (in1) {
@@ -648,6 +762,12 @@ void char_to_hex(unsigned char in0, unsigned char in1, unsigned char* out) {
 		case 'd': *out = 0xad; break;
 		case 'e': *out = 0xae; break;
 		case 'f': *out = 0xaf; break;
+		case 'A': *out = 0xaa; break;
+		case 'B': *out = 0xab; break;
+		case 'C': *out = 0xac; break;
+		case 'D': *out = 0xad; break;
+		case 'E': *out = 0xae; break;
+		case 'F': *out = 0xaf; break;
 		} break;
 	case 'b':
 		switch (in1) {
@@ -667,6 +787,12 @@ void char_to_hex(unsigned char in0, unsigned char in1, unsigned char* out) {
 		case 'd': *out = 0xbd; break;
 		case 'e': *out = 0xbe; break;
 		case 'f': *out = 0xbf; break;
+		case 'A': *out = 0xba; break;
+		case 'B': *out = 0xbb; break;
+		case 'C': *out = 0xbc; break;
+		case 'D': *out = 0xbd; break;
+		case 'E': *out = 0xbe; break;
+		case 'F': *out = 0xbf; break;
 		} break;
 	case 'c':
 		switch (in1) {
@@ -686,6 +812,12 @@ void char_to_hex(unsigned char in0, unsigned char in1, unsigned char* out) {
 		case 'd': *out = 0xcd; break;
 		case 'e': *out = 0xce; break;
 		case 'f': *out = 0xcf; break;
+		case 'A': *out = 0xca; break;
+		case 'B': *out = 0xcb; break;
+		case 'C': *out = 0xcc; break;
+		case 'D': *out = 0xcd; break;
+		case 'E': *out = 0xce; break;
+		case 'F': *out = 0xcf; break;
 		} break;
 	case 'd':
 		switch (in1) {
@@ -705,6 +837,12 @@ void char_to_hex(unsigned char in0, unsigned char in1, unsigned char* out) {
 		case 'd': *out = 0xdd; break;
 		case 'e': *out = 0xde; break;
 		case 'f': *out = 0xdf; break;
+		case 'A': *out = 0xda; break;
+		case 'B': *out = 0xdb; break;
+		case 'C': *out = 0xdc; break;
+		case 'D': *out = 0xdd; break;
+		case 'E': *out = 0xde; break;
+		case 'F': *out = 0xdf; break;
 		} break;
 	case 'e':
 		switch (in1) {
@@ -724,6 +862,12 @@ void char_to_hex(unsigned char in0, unsigned char in1, unsigned char* out) {
 		case 'd': *out = 0xed; break;
 		case 'e': *out = 0xee; break;
 		case 'f': *out = 0xef; break;
+		case 'A': *out = 0xea; break;
+		case 'B': *out = 0xeb; break;
+		case 'C': *out = 0xec; break;
+		case 'D': *out = 0xed; break;
+		case 'E': *out = 0xee; break;
+		case 'F': *out = 0xef; break;
 		} break;
 	case 'f':
 		switch (in1) {
@@ -743,6 +887,162 @@ void char_to_hex(unsigned char in0, unsigned char in1, unsigned char* out) {
 		case 'd': *out = 0xfd; break;
 		case 'e': *out = 0xfe; break;
 		case 'f': *out = 0xff; break;
+		case 'A': *out = 0xfa; break;
+		case 'B': *out = 0xfb; break;
+		case 'C': *out = 0xfc; break;
+		case 'D': *out = 0xfd; break;
+		case 'E': *out = 0xfe; break;
+		case 'F': *out = 0xff; break;
+		} break;
+	case 'A':
+		switch (in1) {
+		case '0': *out = 0xa0; break;
+		case '1': *out = 0xa1; break;
+		case '2': *out = 0xa2; break;
+		case '3': *out = 0xa3; break;
+		case '4': *out = 0xa4; break;
+		case '5': *out = 0xa5; break;
+		case '6': *out = 0xa6; break;
+		case '7': *out = 0xa7; break;
+		case '8': *out = 0xa8; break;
+		case '9': *out = 0xa9; break;
+		case 'a': *out = 0xaa; break;
+		case 'b': *out = 0xab; break;
+		case 'c': *out = 0xac; break;
+		case 'd': *out = 0xad; break;
+		case 'e': *out = 0xae; break;
+		case 'f': *out = 0xaf; break;
+		case 'A': *out = 0xaa; break;
+		case 'B': *out = 0xab; break;
+		case 'C': *out = 0xac; break;
+		case 'D': *out = 0xad; break;
+		case 'E': *out = 0xae; break;
+		case 'F': *out = 0xaf; break;
+		} break;
+	case 'B':
+		switch (in1) {
+		case '0': *out = 0xb0; break;
+		case '1': *out = 0xb1; break;
+		case '2': *out = 0xb2; break;
+		case '3': *out = 0xb3; break;
+		case '4': *out = 0xb4; break;
+		case '5': *out = 0xb5; break;
+		case '6': *out = 0xb6; break;
+		case '7': *out = 0xb7; break;
+		case '8': *out = 0xb8; break;
+		case '9': *out = 0xb9; break;
+		case 'a': *out = 0xba; break;
+		case 'b': *out = 0xbb; break;
+		case 'c': *out = 0xbc; break;
+		case 'd': *out = 0xbd; break;
+		case 'e': *out = 0xbe; break;
+		case 'f': *out = 0xbf; break;
+		case 'A': *out = 0xba; break;
+		case 'B': *out = 0xbb; break;
+		case 'C': *out = 0xbc; break;
+		case 'D': *out = 0xbd; break;
+		case 'E': *out = 0xbe; break;
+		case 'F': *out = 0xbf; break;
+		} break;
+	case 'C':
+		switch (in1) {
+		case '0': *out = 0xc0; break;
+		case '1': *out = 0xc1; break;
+		case '2': *out = 0xc2; break;
+		case '3': *out = 0xc3; break;
+		case '4': *out = 0xc4; break;
+		case '5': *out = 0xc5; break;
+		case '6': *out = 0xc6; break;
+		case '7': *out = 0xc7; break;
+		case '8': *out = 0xc8; break;
+		case '9': *out = 0xc9; break;
+		case 'a': *out = 0xca; break;
+		case 'b': *out = 0xcb; break;
+		case 'c': *out = 0xcc; break;
+		case 'd': *out = 0xcd; break;
+		case 'e': *out = 0xce; break;
+		case 'f': *out = 0xcf; break;
+		case 'A': *out = 0xca; break;
+		case 'B': *out = 0xcb; break;
+		case 'C': *out = 0xcc; break;
+		case 'D': *out = 0xcd; break;
+		case 'E': *out = 0xce; break;
+		case 'F': *out = 0xcf; break;
+		} break;
+	case 'D':
+		switch (in1) {
+		case '0': *out = 0xd0; break;
+		case '1': *out = 0xd1; break;
+		case '2': *out = 0xd2; break;
+		case '3': *out = 0xd3; break;
+		case '4': *out = 0xd4; break;
+		case '5': *out = 0xd5; break;
+		case '6': *out = 0xd6; break;
+		case '7': *out = 0xd7; break;
+		case '8': *out = 0xd8; break;
+		case '9': *out = 0xd9; break;
+		case 'a': *out = 0xda; break;
+		case 'b': *out = 0xdb; break;
+		case 'c': *out = 0xdc; break;
+		case 'd': *out = 0xdd; break;
+		case 'e': *out = 0xde; break;
+		case 'f': *out = 0xdf; break;
+		case 'A': *out = 0xda; break;
+		case 'B': *out = 0xdb; break;
+		case 'C': *out = 0xdc; break;
+		case 'D': *out = 0xdd; break;
+		case 'E': *out = 0xde; break;
+		case 'F': *out = 0xdf; break;
+		} break;
+	case 'E':
+		switch (in1) {
+		case '0': *out = 0xe0; break;
+		case '1': *out = 0xe1; break;
+		case '2': *out = 0xe2; break;
+		case '3': *out = 0xe3; break;
+		case '4': *out = 0xe4; break;
+		case '5': *out = 0xe5; break;
+		case '6': *out = 0xe6; break;
+		case '7': *out = 0xe7; break;
+		case '8': *out = 0xe8; break;
+		case '9': *out = 0xe9; break;
+		case 'a': *out = 0xea; break;
+		case 'b': *out = 0xeb; break;
+		case 'c': *out = 0xec; break;
+		case 'd': *out = 0xed; break;
+		case 'e': *out = 0xee; break;
+		case 'f': *out = 0xef; break;
+		case 'A': *out = 0xea; break;
+		case 'B': *out = 0xeb; break;
+		case 'C': *out = 0xec; break;
+		case 'D': *out = 0xed; break;
+		case 'E': *out = 0xee; break;
+		case 'F': *out = 0xef; break;
+		} break;
+	case 'F':
+		switch (in1) {
+		case '0': *out = 0xf0; break;
+		case '1': *out = 0xf1; break;
+		case '2': *out = 0xf2; break;
+		case '3': *out = 0xf3; break;
+		case '4': *out = 0xf4; break;
+		case '5': *out = 0xf5; break;
+		case '6': *out = 0xf6; break;
+		case '7': *out = 0xf7; break;
+		case '8': *out = 0xf8; break;
+		case '9': *out = 0xf9; break;
+		case 'a': *out = 0xfa; break;
+		case 'b': *out = 0xfb; break;
+		case 'c': *out = 0xfc; break;
+		case 'd': *out = 0xfd; break;
+		case 'e': *out = 0xfe; break;
+		case 'f': *out = 0xff; break;
+		case 'A': *out = 0xfa; break;
+		case 'B': *out = 0xfb; break;
+		case 'C': *out = 0xfc; break;
+		case 'D': *out = 0xfd; break;
+		case 'E': *out = 0xfe; break;
+		case 'F': *out = 0xff; break;
 		} break;
 	}
 	
@@ -769,6 +1069,12 @@ int check_hex(unsigned char in) {
 		case 'd': check = 0; break;
 		case 'e': check = 0; break;
 		case 'f': check = 0; break;
+		case 'A': check = 0; break;
+		case 'B': check = 0; break;
+		case 'C': check = 0; break;
+		case 'D': check = 0; break;
+		case 'E': check = 0; break;
+		case 'F': check = 0; break;
 		default: check = 1; break;
 		}
 

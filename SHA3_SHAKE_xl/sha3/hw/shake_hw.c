@@ -127,13 +127,14 @@ void shake_hw(unsigned char* in, unsigned char* out, unsigned long long int leng
 	unsigned long long int buffer_in[(SIZE_BLOCK / 64)];
 	unsigned long long int buffer_out[(int)ceil((double)SHAKE_OUT / (double)64)];
 	unsigned char prev_out[SIZE_OUTPUT];
+	unsigned char prev_out_2[18000];
 	unsigned long long int buf_1, buf_2;
 
 	unsigned long long tic = 0, toc;
 
 	//unsigned char OUT_MATRIX[1024][SIZE_OUTPUT]; // Bits max = 1024*SHAKE_OUT
-	int** OUT_MATRIX = (int**)malloc(1024 * sizeof(int*));
-	for (int i = 0; i < 1024; i++) OUT_MATRIX[i] = (int*)malloc(SHAKE_OUT * sizeof(unsigned char));
+	//int** OUT_MATRIX = (int**)malloc(1024 * sizeof(int*));
+	//for (int i = 0; i < 1024; i++) OUT_MATRIX[i] = (int*)malloc(SHAKE_OUT * sizeof(unsigned char));
 
 
 	// ------- Number of hash blocks ----- //
@@ -202,7 +203,8 @@ void shake_hw(unsigned char* in, unsigned char* out, unsigned long long int leng
 		}
 
 		for (int i = 0; i < SIZE_OUTPUT; i++) {
-			OUT_MATRIX[ind_matrix][i] = prev_out[i];	
+			//OUT_MATRIX[ind_matrix][i] = prev_out[i];	
+			prev_out_2[ind_matrix*SIZE_OUTPUT + i] = prev_out[i];
 		}
 
 		ind_matrix++;
@@ -236,7 +238,8 @@ void shake_hw(unsigned char* in, unsigned char* out, unsigned long long int leng
 			}
 
 			for (int i = 0; i < SIZE_OUTPUT; i++) {
-				OUT_MATRIX[ind_matrix][i] = prev_out[i];
+				//OUT_MATRIX[ind_matrix][i] = prev_out[i];
+				prev_out_2[ind_matrix * SIZE_OUTPUT + i] = prev_out[i];
 			}
 
 			ind_matrix++;
@@ -250,9 +253,10 @@ void shake_hw(unsigned char* in, unsigned char* out, unsigned long long int leng
 	// SHAKE output
 	ind_matrix = 0;
 	for (int j = 0; j < (int)ceil((double)length_out / (double)8); j = j + 1) {
-		if (j == (ind_matrix + 1) * SIZE_OUTPUT) ind_matrix++;
+		//if (j == (ind_matrix + 1) * SIZE_OUTPUT) ind_matrix++;
 
-		out[j] = OUT_MATRIX[ind_matrix][j - (ind_matrix*SIZE_OUTPUT)];
+		//out[j] = OUT_MATRIX[ind_matrix][j - (ind_matrix*SIZE_OUTPUT)];
+		out[j] = prev_out_2[j];
 
 		if (DBG == 4) printf("\n ind_matrix: %d \t j: %d", ind_matrix, j);
 
@@ -262,7 +266,7 @@ void shake_hw(unsigned char* in, unsigned char* out, unsigned long long int leng
 
 	if (DBG == 4) {
 		for (int j = 0; j < SIZE_OUTPUT; j = j + 1)
-			printf("\n %d: %x", j, OUT_MATRIX[0][j]);
+			printf("\n %d: %x", j, prev_out_2[j]);
 	}
 	
 
