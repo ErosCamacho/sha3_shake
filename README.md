@@ -58,6 +58,7 @@ The IP integration is finished adding an user interface in which it is possible 
 
 ![](images/IP_integrator_sha3.png)
 
+<!--- 
 The next table shows all the implementations delivered in this repository. There are in total 8 different strategies: 4 parameters set in the NTRU where in each one the
 `max_cycles` value was set in `N` and `CL` (Confident Limit). From each configuration there are different values of `M`: `1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,32,64,128,256`.
 That is basically the content of the folder `NTRU_3Round.rar\bit\`. As a final user, you can discard (and remove) other implementations and remake the embedded integration using the 
@@ -179,7 +180,7 @@ Demo_509 -d -v 2
 ```
 
 At the end, it will check that both platforms share the same secrets.
-
+-->
 
 ## Note for version <a name="note"></a>
 ### v. 1.0
