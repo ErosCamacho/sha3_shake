@@ -159,7 +159,7 @@ There are several use of case of this demo, but in general it is going to be use
 
 The execution of both examples can be shown in the next figure:
 
-<img src="images/example_demo.png" alt="" width="600"/>
+<img src="images/demo_example.png" alt="" width="600"/>
 
 ## Note for version <a name="note"></a>
 ### v. 1.0
