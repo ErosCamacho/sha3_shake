@@ -154,7 +154,7 @@ There are several use of case of this demo, but in general it is going to be use
 
 2. In this case if it is the content of a file (in hexadecimal) what is going to be hashed: 
 ```bash
-./sha3_512_demo -mf input_data.txt
+./sha3_512_demo -mf files/input_data.txt
 ```
 
 The execution of both examples can be shown in the next figure:
