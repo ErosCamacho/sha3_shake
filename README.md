@@ -152,16 +152,14 @@ There are several use of case of this demo, but in general it is going to be use
 ./sha3_512_demo -m 0123456789
 ```
 
-whose result is shown in the next figure:
-
-
-
 2. In this case if it is the content of a file (in hexadecimal) what is going to be hashed: 
 ```bash
 ./sha3_512_demo -mf input_data.txt
 ```
 
+The execution of both examples can be shown in the next figure:
 
+<img src="images/example_demo.png" alt="" width="600"/>
 
 ## Note for version <a name="note"></a>
 ### v. 1.0
