@@ -31,7 +31,7 @@ void main(int argc, char** argv) {
 
 		if (argv[arg][0] == '-') {
 			if (argv[arg][1] == 'h') {
-				printf("\n Usage: ./sha3_XXX_spirs [-h] [-v] [-m] [-f] [-l] \n");
+				printf("\n Usage: ./shake_XXX_demo [-h] [-v] [-m] [-f] [-l] \n");
 				printf("\n -h: Show the help.");
 				printf("\n -v: Verbose Level:");
 				printf("\n \t 1: Show the Acceleration (By default).");

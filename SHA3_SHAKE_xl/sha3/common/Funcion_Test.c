@@ -405,6 +405,9 @@ void input_file(unsigned char* INPUT, unsigned long long int* LEN, unsigned char
 	FILE* rsp;
 	int selection;
 	rsp = fopen(FILE_NAME, "r");
+	if (rsp == NULL) {
+		printf("\n\n ERROR: No file found with this name ... Exit.\n\n"); return;
+	}
 
 	/*
 	unsigned char line[MAX_LINE_LENGTH] = { 0 };
@@ -470,9 +473,6 @@ void input_file(unsigned char* INPUT, unsigned long long int* LEN, unsigned char
 					getchar();
 				}
 			}
-			printf("\n length: %lld", length);
-			printf("\n length: %lld", length/2);
-			printf("\n length: %lld", 4*length);
 
 			*LEN = 8 * (int)ceil((float)length / 2);
 			memcpy(INPUT, data_in, sizeof(unsigned char) * (int)ceil((float)length / 2));

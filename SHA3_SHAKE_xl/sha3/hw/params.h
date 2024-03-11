@@ -59,7 +59,7 @@
 
 #endif
 
-#define SIZE_BYTE 1000000
+#define SIZE_BYTE 100000
 #define SIZE_BITS SIZE_BYTE * 8
 #define SIZE_INPUT SIZE_BITS / 8
 

@@ -57,20 +57,11 @@ The IP integration is finished adding an user interface in which it is possible 
 
 <img src="images/IP_integrator_sha3.png" alt="" width="600"/>
 
-<!--- 
-The next table shows all the implementations delivered in this repository. There are in total 8 different strategies: 4 parameters set in the NTRU where in each one the
-`max_cycles` value was set in `N` and `CL` (Confident Limit). From each configuration there are different values of `M`: `1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,32,64,128,256`.
-That is basically the content of the folder `NTRU_3Round.rar\bit\`. As a final user, you can discard (and remove) other implementations and remake the embedded integration using the 
-configuration more suitable for your interest. 
+The next figure shows the performance of the two optimizations in terms of throughput and efficiency. 
 
-| Parameter set |  `N`  | `CL` |
-| :------------ | --- | --- |
-| `ntruhps2048509` | 509 | 400 |
-| `ntruhps2048677` | 677 | 516 |
-| `ntruhps2048821` | 821 | 625 |
-| `ntruhrss2048701` | 701 | 533 |
+<img src="images/sha3_performance.png" alt="" width="600"/>
 
-For further information, see Chapter 4 of the [PhD Dissertation](https://github.com/ErosCamacho/PhD_Dissertation/blob/main/PhD_Thesis_Eros_Camacho_Ruiz_vFinal_rev.pdf)
+For further information, see Chapter 3 of the [PhD Dissertation](https://github.com/ErosCamacho/PhD_Dissertation/blob/main/PhD_Thesis_Eros_Camacho_Ruiz_vFinal_rev.pdf)
 
 ## Prerequisites for the Pynq-Z2 platform <a name="pre-pynqz2"></a>
 
@@ -80,106 +71,97 @@ For further information, see Chapter 4 of the [PhD Dissertation](https://github.
 
 ## Installation and Use of the Test <a name="ins-test"></a>
 
-1. For compilation of a specific test:
+The Test section performs the NIST Test Vector of each algorithm. 
+
+1. For compilation of a specific test for sha3:
 
 ```bash
-make Test_N_VALUE
+make sha3_XXX_test
 ```
 
-where `N_VALUE` can be: `509, 677, 821, 701`. So, for example if the user wants to compile something related with the parameter set `ntruhps2048509`, 
-they must issue: `make Test_509`
+where `XXX` can be: `224, 256, 384, 512`. So, for example if the user wants to compile the case of sha3-512, 
+they must issue: `make sha3_512_test`
+
+and for shake:
+
+```bash
+make shake_XXX_test
+```
+
+where `XXX` can be: `128, 256`. So, for example if the user wants to compile the case of shake-256, 
+they must issue: `make shaake_256_test`
 
 2. For the use, the program has different input variables:
 	- `-h` : Show the help.
 	- `-hh` : Show the extended help.
-	- `-n` : Number of test to perform.
-	- `-M` : Paralelization coefficient. *Note: For that there must be a bitstream in the folder `N/CL/M`.
-	- `-y` : CL parameter.
-	
-	Also it includes options to debug different parts:
-	- `-d` : debug level
-	- `-c` : number of coefficients to show in the debug. *In order to avoid a data massification on the screen.* 
-		- `0`: Minimize the print in window.
-		- `1`: Show the time in each part of the algorithm.
-		- `2`: Show the extended evaluation of time.
-		- `3`: Show the coefficients of SW and HW.
-		- `4`: Show the multiplication operation in SW.
-		- `5`: Show the multiplication operation in HW.
-		- `6`: Show the public key.
-		- `7`: Show the seed and he coefficients of r and h.
-		- `8`: Show the multiplication operation in SW 3 ROUND.
-		- `9`: Show the cuphertext of 3 ROUND, LIBNTRU, HW.
-		- `10`: Show the hash of rm.
-		- `11`: ***ONLY FOR PERFORMING THE SEED ANALYSIS.*** It generates the file `r.txt` .
+	- `-v` : Verbose Level:
+		- `1`: Show the Acceleration of each NIST run (By default).
+		- `2`: Show the Acceleration + Output Data of each NIST run.
+		- `3`: Show the Acceleration + Input/Output Data of each NIST run.
+	- `-b` : Selection of NIST Bit Test.
+		- `1`: Use the NIST Byte Test **(By default)**.
+		- `2`: Use the NIST Bit Test. ***WARNING: The reference SW is not prepared for this test.***
+	- `-n` : [Number] of test executions.
+	- `-s` : Stop in each run.
+	- `-i` : Select de initial value for the sample run. **It is not mandatory**
+	- `-f` : Select de final value for the sample run. **It is not mandatory**
 
-An example, if it is desired to performance 1000 tests on the `ntruhps2048509` parameter set, using a confident limit of 400 with a parallelization coefficient of 10, 
-it has to be typed: `Test_509 -n 1000 -M 10 -y 400`
+An example, if it is desired to performance 10 tests on the sha3-512, using the NIST Byte Test and those tests between 10 and 20, it has to be typed: `sha3_512_test -n 10 -b 1 -i 10 -f 20`.
 
 ## Installation and Use of the Demo <a name="ins-demo"></a>
 
-The main idea of the Demo is to interconnect two devices and share information using PQC as the next figure shows. In this case, two Pynq platforms are interconnected 
-in a local network. The two of them are going to generate the key pair (public and private keys). Then, one of them is going to recive the public key of the other one using 
-this key to encapsulate a shared secret. Then the ciphertext generated (with the information of the shared secret) is sent to the other platform that will use the 
-private key to decapsulate and extract the shared secret. 
+The main idea of the Demo is to use the hardware implementations in real use of cases. For that it has been given the option to input either a prompt message or a file in ASCII format or hexadecimal format. 
 
-![](images/demo_ntru.jpg)
-
-1. For compilation of a specific demo:
+1. For compilation of a specific demo for sha3:
 
 ```bash
-make Demo_N_VALUE
+make sha3_XXX_demo
 ```
 
-where `N_VALUE` can be: `509, 677, 821, 701`. So, for example if the user wants to compile something related with the parameter set `ntruhps2048509`, 
-they must issue: `make Demo_509`
+where `XXX` can be: `224, 256, 384, 512`. So, for example if the user wants to compile the case of sha3-512, 
+they must issue: `make sha3_512_demo`
+
+and for shake:
+
+```bash
+make shake_XXX_demo
+```
+
+where `XXX` can be: `128, 256`. So, for example if the user wants to compile the case of shake-256, 
+they must issue: `make shaake_256_demo`
 
 2. For the use, the program has different input variables:
 	- `-h` : Show the help.
-	- `-k` : Key generation.
-	- `-e` : Encapsulation. 
-	- `-d` : Decapsulation.
-	
-	Also it includes verbose options:
-	- `-v` : verbose level level
-		- `1`: Show only functions.
-		- `2`: Show intermediate results.
-		- `3`: Show keys.
+	- `-v`: Verbose Level:
+		- `1`: Show the Acceleration (By default).
+		- `2`: Show the Acceleration + Output Data.
+		- `3`: Show the Acceleration + Input/Output Data.
+	- `-m`: Input message (HEX format).
+	- `-t`: Input message (TXT format).
+	- `-mf`: Input HEX file [file name].
+	- `-tf`: Input TXT file [file name].
+
+The results of the demo can also be checked in: https://emn178.github.io/online-tools/sha3_512.html.
 
 ## Example of the Demo <a name="example"></a>
 
-A demo video example can be seen in the next [link](https://saco.csic.es/index.php/s/Ze9GETKY7zzMJ23). 
+There are several use of case of this demo, but in general it is going to be used to hash an input text in hex format and a file.
 
-For the example, two platforms will be used: #PLATFORM_1 and #PLATFORM_2. It is recommended that the verbose level be 2 in order to see all the intermediate results.
-
-1. The first step is to perform the key generation in both platforms:
+1. So, for example if the message `0x0123456789` is going to be hashed using the sha3-512
 ```bash
-Demo_509 -k -v 2
+./sha3_512_demo -m 0123456789
 ```
 
-2. The next step is to send the public key of the #PLATFORM_1 to the #PLATFORM_2:
-```bash
-send_pk.sh
-```
-*Note: the configuration set in `send_pk.sh` can be modified to the final user. It has been set to my personal set-up.*
+whose result is shown in the next figure:
 
-3. The next step is to encapsulate the shared secret using the public key in the #PLATFORM_2.
+
+
+2. In this case if it is the content of a file (in hexadecimal) what is going to be hashed: 
 ```bash
-Demo_509 -e -v 2
+./sha3_512_demo -mf input_data.txt
 ```
 
-4. The next step is to send the ciphertext generated in the below step back to the #PLATFORM_1:
-```bash
-send_ct.sh
-```
-*Note: the configuration set in `send_ct.sh` can be modified to the final user. It has been set to my personal set-up.*
 
-5. The next step is to recover the shared secret in the #PLATFORM_1 decapsulating:
-```bash
-Demo_509 -d -v 2
-```
-
-At the end, it will check that both platforms share the same secrets.
--->
 
 ## Note for version <a name="note"></a>
 ### v. 1.0
@@ -193,11 +175,11 @@ At the end, it will check that both platforms share the same secrets.
 
 _Hardware Cryptography Researcher_ 
 
-_Instituto de Microelectrónica de Sevilla (IMSE-CNM), CSIC, Universidad de Sevilla, Seville, Spain_
+_Instituto de MicroelectrÃ³nica de Sevilla (IMSE-CNM), CSIC, Universidad de Sevilla, Seville, Spain_
 
 ## Developers <a name="developers"></a>
 Eros Camacho-Ruiz
 
-_Instituto de Microelectrónica de Sevilla (IMSE-CNM), CSIC, Universidad de Sevilla, Seville, Spain_
+_Instituto de MicroelectrÃ³nica de Sevilla (IMSE-CNM), CSIC, Universidad de Sevilla, Seville, Spain_
 
 
